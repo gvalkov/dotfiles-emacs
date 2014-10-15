@@ -1,0 +1,17 @@
+tags
+TAGS
+.#.*
+
+cache/*
+auto-save-list
+session.*
+tramp
+.mc-lists.el
+url
+bookmarks
+.python-environments
+ac-comphist.dat
+
+.cask
+elpa
+elpa/archives
