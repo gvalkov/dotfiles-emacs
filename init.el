@@ -245,7 +245,7 @@
     (setq recentf-max-menu-items 40)
     (setq recentf-exclude
           '("/tmp/" "\\.ido\\.last" "ido.last" "\\.git/config" "\\.git/COMMIT_EDITMSG"
-            "cache/recentf" "\\.emacs\\.d/elpa/.*"))
+            "cache/recentf" "\\.emacs\\.d/elpa/.*" "\\.emacs\\.d/.cask/.*"  ))
     (recentf-mode 1)))
 
 ;-----------------------------------------------------------------------------
@@ -689,13 +689,17 @@
 
 ;-----------------------------------------------------------------------------
 (use-package projectile
+  :diminish "Pj"
   :init
   (progn
     (projectile-global-mode)
     (setq projectile-indexing-method 'alien
           projectile-cache-file "~/.emacs.d/cache/projectile.cache"
           projectile-known-projects-file "~/.emacs.d/cache/projectile-bookmarks.eld"
-          projectile-enable-caching t)))
+          projectile-enable-caching t)
+    (add-to-list 'projectile-globally-ignored-directories "elpa")
+    (add-to-list 'projectile-globally-ignored-directories ".cask")
+    (add-to-list 'projectile-globally-ignored-directories ".cache")))
 
 ;-----------------------------------------------------------------------------
 (use-package ibuffer
