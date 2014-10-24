@@ -16,3 +16,4 @@ ac-comphist.dat
 elpa
 elpa/archives
 local.el
+async-bytecomp.log

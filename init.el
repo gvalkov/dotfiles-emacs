@@ -7,7 +7,7 @@
 ; setup load-path
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/plugins"))
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/colors"))
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/"))
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp"))
 (add-to-list 'image-load-path (concat basedir "images"))
 (add-to-list 'custom-theme-load-path (concat basedir "colors"))
 
@@ -30,8 +30,9 @@
 (require 'cask "~/.cask/cask.el")
 
 (add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/") t)
+             '("melpa" . "http://melpa.org/packages/") t)
 
+(require 'evil-nerd-commenter)
 (package-initialize)
 (cask-initialize)
 (require 'pallet)
@@ -1093,8 +1094,6 @@
          "** %^{Heading}")))
 
 (setq org-default-refile-file "~/org/refile.org")
-(setq org-refile-targets ('(("projects.org" :maxlevel . 1)
-                            ("notes.org" :level . 2))))
 
 
 ;-----------------------------------------------------------------------------
