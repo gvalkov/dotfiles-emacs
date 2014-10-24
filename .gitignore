@@ -15,3 +15,4 @@ ac-comphist.dat
 .cask
 elpa
 elpa/archives
+local.el

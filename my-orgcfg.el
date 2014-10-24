@@ -1,107 +1,24 @@
 ;;; org-mode
-(add-hook 'org-mode-hook 'turn-on-font-lock)
-;; (add-hook 'org-mode-hook 'turn-on-org-cdlatex)
+(add-hook 'org-mode-hook 'my/org-mode-hook)
+(defun my/org-mode-hook ()
+  (local-set-key (kbd "A-b") 'org-text-bold)
+  (local-set-key (kbd "A-i") 'org-text-italics)
+  (local-set-key (kbd "A-=") 'org-text-code)
+  (set-newline-and-indent)
+  (turn-on-flyspell))
 
-(setq org-log-done 'time)
-(setq org-log-into-drawer t)
-;; (setq org-log-state-notes-insert-after-drawers nil)
-
-(setq org-completion-use-ido t)
-(setq org-enforce-todo-dependencies t)
-(setq org-enforce-todo-checkbox-dependencies t)
-(setq org-edit-timestamp-down-means-later t)
-
-(setq org-id-locations-file "~/.emacs.d/cache/org-id-locations")
-(setq org-default-notes-file "~/org/notes.org")
-(setq org-pygment-path (if (bsd-p) "/usr/local/bin/pygmentize" "/usr/bin/pygmentize"))
-
-(setq org-directory "~/org")
-(setq org-mobile-directory "~/org/mobile-org")
-(setq org-mobile-inbox-for-pull "~/org/from-mobile.org")
-
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cb" 'org-iswitchb)
-
+;-----------------------------------------------------------------------------
 (define-key evil-normal-state-map (kbd ",r") 'org-capture)
 (define-key global-map (kbd "<f6>" ) 'org-capture)
 
-(setq org-agenda-start-on-weekday nil)
-(setq org-agenda-ndays 14)
-(setq org-agenda-window-setup 'current-window)
-(setq org-agenda-show-all-dates t)
-(setq org-agenda-files '("~/org/notes.org"
-                         "~/org/projects.org"
-                         "~/org/refile.org"))
-(setq org-agenda-include-diary nil)
-;; (setq org-agenda-skip-deadline-if-done t)
-;; (setq org-agenda-skip-scheduled-if-done t)
-;; (setq org-remember-store-without-prompt t)
 
 (setq org-deadline-warning-days 30)
 
 (setq org-fast-tag-selection-single-key 'expert)
 (setq org-tags-column 80)
-
-(setq org-src-fontify-natively t)
-(setq org-fontify-done-headline t)
-(custom-set-faces
- '(org-done ((t (:foreground "PaleGreen"
-                 :weight normal
-                 :strike-through t))))
- '(org-headline-done
-            ((((class color) (min-colors 16) (background dark))
-               (:foreground "LightSalmon" :strike-through t)))))
-
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python . t)
-   (emacs-lisp . t)
-   ))
-
-(defun my-org-confirm-babel-evaluate (lang body)
-  (not (string= lang "pygment")))
-
-(setq org-confirm-babel-evaluate 'my-org-confirm-babel-evaluate)
-
 (setq org-link-abbrev-alist '(("attach" . org-attach-expand-link)))
 
-(setq org-capture-templates
-      '(
-        ("t" "todo" entry (file+headline org-default-refile-file "INBOX")
-         "*** TODO %?\n %i\n")
-
-        ("n" "note" entry (file+datetree org-default-refile-file)
-         "* %^{Description} %^g %? Added: %U")
-
-        ("j" "journal" entry (file+datetree "~/org/journal.org")
-         "** %^{Heading}")
-        ))
-
-(setq org-default-refile-file "~/org/refile.org")
-(setq org-refile-targets (quote (("projects.org" :maxlevel . 1)
-                                 ("notes.org" :level . 2))))
-
-
-(setq org-export-htmlize-output-type 'css)
-
-(eval-after-load "org"
-  '(add-to-list 'org-modules 'org-habit))
-
-(defun my-org-mode-hook ()
-  (local-set-key (kbd "A-b") 'org-text-bold)
-  (local-set-key (kbd "A-i") 'org-text-italics)
-  (local-set-key (kbd "A-=") 'org-text-code))
-
-(add-hook 'org-mode-hook 'turn-on-flyspell 'append)
-(add-hook 'org-mode-hook 'my-org-mode-hook)
-
-(setq org-startup-indented t)
-(setq org-startup-folded 0)
-(setq org-cycle-separator-lines 1)
-;; (setq org-reverse-note-order nil)
-;; (setq org-id-method 'uuid)
+;-----------------------------------------------------------------------------
 
 (defun evil-org-insert-heading ()
   (interactive)

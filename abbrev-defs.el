@@ -29,21 +29,9 @@
 
 (define-abbrev-table 'fundamental-mode-abbrev-table '())
 
-(define-abbrev-table 'global-abbrev-table
-  '(
-    ("ipdb" "import ipdb ; ipdb.set_trace()" nil 0)
-    ("p(" "print(" nil 0)
-    ("p()" "print(" nil 0)
-    ("pdb" "import pdb ; pdb.set_trace()" nil 0)
-   ))
+(define-abbrev-table 'global-abbrev-table '())
 
-(define-abbrev-table 'go-mode-abbrev-table
-  '(
-    ("errorf" "fmt.Errorf" nil 74)
-    ("print" "fmt.Println" nil 83)
-    ("printf" "fmt.Printf" nil 74)
-    ("sprintf" "fmt.Sprintf" nil 73)
-   ))
+(define-abbrev-table 'go-mode-abbrev-table '())
 
 (define-abbrev-table 'google-maps-static-mode-abbrev-table '())
 
@@ -73,9 +61,7 @@
 
 (define-abbrev-table 'lisp-mode-abbrev-table '())
 
-(define-abbrev-table 'lua-mode-abbrev-table
-  '(
-   ))
+(define-abbrev-table 'lua-mode-abbrev-table '())
 
 (define-abbrev-table 'makefile-automake-mode-abbrev-table '())
 
@@ -111,21 +97,13 @@
 
 (define-abbrev-table 'prog-mode-abbrev-table '())
 
-(define-abbrev-table 'python-mode-abbrev-table
-  '(
-    ("ipdb" "import ipdb ; ipdb.set_trace()" nil 0)
-    ("p(" "print(" nil 0)
-    ("p()" "print(" nil 0)
-    ("pdb" "import pdb ; pdb.set_trace()" nil 0)
-   ))
+(define-abbrev-table 'python-mode-abbrev-table '())
 
 (define-abbrev-table 'python2-mode-abbrev-table '())
 
 (define-abbrev-table 'python3-mode-abbrev-table '())
 
-(define-abbrev-table 'rst-mode-abbrev-table
-  '(
-   ))
+(define-abbrev-table 'rst-mode-abbrev-table '())
 
 (define-abbrev-table 'rst-toc-mode-abbrev-table '())
 
@@ -152,4 +130,3 @@
 (define-abbrev-table 'vc-hg-log-view-mode-abbrev-table '())
 
 (define-abbrev-table 'yaml-mode-abbrev-table '())
-

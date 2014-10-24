@@ -434,7 +434,7 @@
     ;;   (shut-up (yas-exit-all-snippets)))
     ;; Only load personal snippets
     (setq yas-verbosity 1)
-    (setq yas-snippet-dirs "~/.emacs.d/snippets")
+    (setq yas-snippet-dirs '("~/.emacs.d/snippets" yas-installed-snippets-dir))
     (setq yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
     (after auto-complete
            (add-hook! 'yas-before-expand-snippet-hook (auto-complete-mode -1))
@@ -1037,6 +1037,70 @@
 (associate-mode "\\.cmake\\'" cmake-mode)
 
 ;;;---------------------------------------------------------------------------
+;;; Org mode
+;;;---------------------------------------------------------------------------
+(setq org-startup-indented t)
+(setq org-startup-folded 0)
+(setq org-cycle-separator-lines 1)
+
+(setq org-src-fontify-natively t)
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+(setq org-completion-use-ido t)
+(setq org-enforce-todo-dependencies t)
+(setq org-enforce-todo-checkbox-dependencies t)
+(setq org-edit-timestamp-down-means-later t)
+
+;-----------------------------------------------------------------------------
+; default locations
+(setq org-id-locations-file "~/.emacs.d/cache/org-id-locations")
+(setq org-directory "~/org")
+(setq org-default-notes-file "~/org/notes.org")
+(setq org-mobile-directory "~/org/mobile-org")
+(setq org-mobile-inbox-for-pull "~/org/from-mobile.org")
+(setq org-agenda-files '("~/org/notes.org"
+                         "~/org/projects.org"
+                         "~/org/refile.org"))
+
+;-----------------------------------------------------------------------------
+; agenda configs
+(setq org-agenda-start-on-weekday nil)
+(setq org-agenda-ndays 14)
+(setq org-agenda-window-setup 'current-window)
+(setq org-agenda-show-all-dates t)
+(setq org-agenda-include-diary nil)
+;; (setq org-agenda-skip-deadline-if-done t)
+;; (setq org-agenda-skip-scheduled-if-done t)
+;; (setq org-remember-store-without-prompt t)
+
+;-----------------------------------------------------------------------------
+; capture
+(setq org-tag-alist
+      '(("@work" . ?b)
+        ("@home" . ?h)
+        ("@errands" . ?e)
+        ("@reading" . ?r)
+        ("projects" . ?q)))
+
+(setq org-capture-templates
+      '(("t" "todo" entry (file+headline org-default-refile-file "Inbox")
+         "* TODO %?\n %i\n")
+        ("c" "Changelog" entry (concat (projectile-project-root) "/CHANGELOG.org" "Unsorted")
+         "%u %? :unsorted:\n%i" :prepend t)
+        ("n" "note" entry (file+datetree org-default-refile-file)
+         "* %^{Description} %^g %? Added: %U")
+        ("j" "journal" entry (file+datetree "~/org/journal.org")
+         "** %^{Heading}")))
+
+(setq org-default-refile-file "~/org/refile.org")
+(setq org-refile-targets ('(("projects.org" :maxlevel . 1)
+                            ("notes.org" :level . 2))))
+
+
+;-----------------------------------------------------------------------------
+(setq org-export-htmlize-output-type 'css)
+
+;;;---------------------------------------------------------------------------
 ;;; Keymaps
 ;;;---------------------------------------------------------------------------
 (global-set-key [down-mouse-3] 'x-menu-bar-open)
@@ -1086,7 +1150,6 @@
  "sc" (lambda () (interactive)(switch-to-buffer "*scratch*"))
  "sw" 'helm-swoop
  ;; "l" 'ido-switch-buffer
- ;; "m" 'recentf-ido-find-file
  ;; "f" 'ido-find-file
 
  ; magit
@@ -1108,8 +1171,8 @@
 
 ;-----------------------------------------------------------------------------
 ; toggle between relative, absolute and no line numbering
-(global-set-key (kbd "C-<f5>") (toggle-linum-keycb "%3d"))
-(global-set-key (kbd "C-S-<f5>") (toggle-linum-keycb 'linum-relative))
+(global-set-key (kbd "C-<f5>") (my/toggle-linum-keycb "%3d"))
+(global-set-key (kbd "C-S-<f5>") (my/toggle-linum-keycb 'linum-relative))
 
 ;;;---------------------------------------------------------------------------
 (when (file-readable-p "~/.emacs.d/local.el")

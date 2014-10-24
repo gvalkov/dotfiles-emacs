@@ -40,11 +40,12 @@
                        ("if" "if ${1:cond}:\n   $0" "if" nil
                         ("control structure")
                         nil nil nil nil)
-                       ("ife" "if $1:\n   $2\nelse:\n   $0" "ife" nil
+                       ("ife" "if $1:\n   $2\nelse:\n   $0\n" "ife" nil
                         ("control structure")
-                        nil nil nil nil)
+                        ((yas/indent-line 'fixed))
+                        nil nil nil)
                        ("ifmain" "if __name__ == '__main__':\n    $0" "if __name__ == '__main__': ..." nil nil nil nil nil nil)
-                       ("ipdb" "import ipdb; ipdb.set_trace()\n" "pudb" nil nil nil nil nil nil)
+                       ("ipdb" "import ipdb; ipdb.set_trace()\n" "ipdb" nil nil nil nil nil nil)
                        ("lam" "lambda ${1:x}: $0\n" "lambda" nil nil nil nil nil nil)
                        ("lc" "[${1:i} for $1 in ${2:list}]\n$0\n" "list" nil
                         ("definitions")
@@ -52,6 +53,7 @@
                        ("ln" "logger = logging.getLogger(__name__)" "logger_name" nil nil nil nil nil nil)
                        ("log" "logger = logging.getLogger(\"${1:name}\")\nlogger.setLevel(logging.${2:level})\n" "logging" nil nil nil nil nil nil)
                        ("m" "def ${1:name}(self${2:, $3}):\n    $0\n" "method" nil nil nil nil nil nil)
+                       ("pdb" "import pdb; pdb.set_trace()\n" "pdb" nil nil nil nil nil nil)
                        ("!!" "#!/usr/bin/env ${1:$$(yas/choose-value '(\"python\" \"python2\" \"python3\" \"python2.7\" \"python3.3\"))}\n# -*- coding: utf-8; -*-\n\n$0\n" "preamble" nil nil nil nil nil nil)
                        ("p" "print($0)" "print" nil nil nil nil nil nil)
                        ("prop" "def ${1:foo}():\n   doc = \"\"\"${2:Doc string}\"\"\"\n   def fget(self):\n       return self._$1\n   def fset(self, value):\n       self._$1 = value\n   def fdel(self):\n       del self._$1\n   return locals()\n$1 = property(**$1())\n\n$0" "prop" nil nil nil nil nil nil)
@@ -64,7 +66,7 @@
                        ("repr" "def __repr__(self):\n    $0" "repr" nil nil nil nil nil nil)
                        ("r" "return $0" "return" nil nil nil nil nil nil)
                        ("." "self.$0" "self" nil nil nil nil nil nil)
-                       ("sn" "self.$1 = $1" "selfassign" nil nil nil nil nil nil)
+                       (".=" "self.$1 = $1\n" "selfassign" nil nil nil nil nil nil)
                        ("setdef" "${1:var}.setdefault(${2:key}, []).append(${3:value})" "setdef" nil nil nil nil nil nil)
                        ("@sm" "@staticmethod\ndef ${1:func}($2):\n    $0\n" "static" nil nil nil nil nil nil)
                        ("str" "def __str__(self):\n    $0" "str" nil
@@ -80,10 +82,12 @@
                        ("tf" "import unittest\n${1:from ${2:test_file} import *}\n\n$0\n\nif __name__ == '__main__':\n    unittest.main()" "test_file" nil
                         ("definitions")
                         nil nil nil nil)
-                       ("try" "try:\n    $1\nexcept ${2:Exception}:\n    $0\n" "try" nil nil
+                       ("try" "try:\n    $1\nexcept ${2:Exception} as e:\n    $0\n" "try" nil nil
                         ((yas/indent-line 'fixed))
                         nil nil nil)
-                       ("try" "try:\n    $1\nexcept $2:\n    $3\nelse:\n    $0" "tryelse" nil nil nil nil nil nil)
+                       ("try" "try:\n    $1\nexcept $2:\n    $3\nelse:\n    $0\n" "tryelse" nil nil
+                        ((yas/indent-line 'fixed))
+                        nil nil nil)
                        ("un" "def __unicode__(self):\n    $0" "unicode" nil nil nil nil nil nil)
                        ("utf" "# -*- encoding: utf-8 -*-\n$0" "utf8" nil
                         ("general")
@@ -94,4 +98,4 @@
                         nil nil nil nil)))
 
 
-;;; Do not edit! File generated at Sun Sep 29 13:37:58 2013
+;;; Do not edit! File generated at Thu Oct 16 20:05:37 2014

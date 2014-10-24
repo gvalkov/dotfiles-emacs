@@ -51,4 +51,12 @@
 (defun enable-hard-wrap ()
   (auto-fill-mode 1))
 
+(defun set-newline-and-indent ()
+  "Map the return key with `newline-and-indent'"
+  (local-set-key (kbd "RET") 'newline-and-indent))
+
+(defun map-add-to-list (dest &rest args)
+  (mapc '(lambda (arg) (add-to-list dest arg))
+        args))
+
 (provide 'config-defuns)
