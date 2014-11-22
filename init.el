@@ -32,7 +32,6 @@
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
 
-(require 'evil-nerd-commenter)
 (package-initialize)
 (cask-initialize)
 (require 'pallet)
@@ -289,6 +288,7 @@
     (evil-set-initial-state 'magit-branch-manager-mode 'emacs)
     (evil-set-initial-state 'magit-commit-mode 'emacs)
     (evil-set-initial-state 'magit-log-mode 'normal)
+    (evil-set-initial-state 'magit-rebase-mode 'emacs)
     (evil-set-initial-state 'log-view-mode 'emacs)
     (evil-set-initial-state 'ibuffer-mode 'normal)
     (evil-set-initial-state 'ack-mode 'normal)
@@ -408,7 +408,7 @@
   :init
   (progn
     (global-company-mode 1)
-    (setq company-idle-delay 0.15
+    (setq company-idle-delay 0.35
           company-tooltip-limit 30
           company-minimum-prefix-length 3
           company-echo-delay 1
@@ -474,7 +474,7 @@
 
 ;-----------------------------------------------------------------------------
 ; tramp
-(setq tramp-default-method "sshx")
+(setq tramp-default-method "ssh")
 ;; (setq tramp-debug-buffer t)
 ;; (setq tramp-verbose 10)
 ;; (setq tramp-password-prompt-regexp ".*[Pp]assword: *$")
@@ -645,34 +645,34 @@
 
 ;-----------------------------------------------------------------------------
 ; multiple-cursors (only in emacs mode)
-;; (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-;; (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;; (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;; (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
-;; (add-hook 'multiple-cursors-mode-enabled-hook  (lambda () (smartparens-mode -1)))
-;; (add-hook 'multiple-cursors-mode-disabled-hook (lambda () (smartparens-mode t)))
+(add-hook 'multiple-cursors-mode-enabled-hook  (lambda () (smartparens-mode -1)))
+(add-hook 'multiple-cursors-mode-disabled-hook (lambda () (smartparens-mode t)))
 
-;; (defvar my-mc-evil-previous-state nil)
+(defvar my-mc-evil-previous-state nil)
 
-;; ; switch to emacs mode when using multiple-cursors
-;; (defun my-mc-evil-switch-to-emacs-state ()
-;;   (when (and (bound-and-true-p evil-mode)
-;;              (not (eq evil-state 'emacs)))
-;;     (setq my-mc-evil-previous-state evil-state)
-;;     (evil-emacs-state)))
+; switch to emacs mode when using multiple-cursors
+(defun my-mc-evil-switch-to-emacs-state ()
+  (when (and (bound-and-true-p evil-mode)
+             (not (eq evil-state 'emacs)))
+    (setq my-mc-evil-previous-state evil-state)
+    (evil-emacs-state)))
 
-;; (defun my-mc-evil-back-to-previous-state ()
-;;   (when my-mc-evil-previous-state
-;;     (unwind-protect
-;;         (case my-mc-evil-previous-state
-;;           ((normal visual insert) (evil-force-normal-state))
-;;           (t (message "Don't know how to handle previous state: %S"
-;;                       my-mc-evil-previous-state)))
-;;       (setq my-mc-evil-previous-state nil))))
+(defun my-mc-evil-back-to-previous-state ()
+  (when my-mc-evil-previous-state
+    (unwind-protect
+        (case my-mc-evil-previous-state
+          ((normal visual insert) (evil-force-normal-state))
+          (t (message "Don't know how to handle previous state: %S"
+                      my-mc-evil-previous-state)))
+      (setq my-mc-evil-previous-state nil))))
 
-;; (add-hook 'multiple-cursors-mode-enabled-hook  'my-mc-evil-switch-to-emacs-state)
-;; (add-hook 'multiple-cursors-mode-disabled-hook 'my-mc-evil-back-to-previous-state)
+(add-hook 'multiple-cursors-mode-enabled-hook  'my-mc-evil-switch-to-emacs-state)
+(add-hook 'multiple-cursors-mode-disabled-hook 'my-mc-evil-back-to-previous-state)
 
 ;-----------------------------------------------------------------------------
 ; calendar config
@@ -768,7 +768,7 @@
 
     (add-hook 'ibuffer-mode-hook
               (lambda ()
-                ;; (ibuffer-vc-set-filter-groups-by-vc-root)
+                (ibuffer-vc-set-filter-groups-by-vc-root)
                 ;; (ibuffer-do-sort-by-filename/process)
                 ;; (ibuffer-tramp-set-filter-groups-by-tramp-connection)
                 ;; (ibuffer-do-sort-by-alphabetic)
@@ -953,7 +953,8 @@
 ;-----------------------------------------------------------------------------
 (use-package python-environment
   :init
-  (setq python-environment-directory "~/.emacs.d/cache/python-environments"))
+  (progn
+    (setq python-environment-directory "~/.emacs.d/cache/python-environments")))
 
 ;-----------------------------------------------------------------------------
 (use-package python
@@ -975,6 +976,7 @@
        (add-hook 'python-mode-hook 'eldoc-mode)))
 
     (setq python-shell-interpreter "python")
+    (setq python-fill-docstring-style 'django)
     ;; (setq-default python-skeleton-autoinsert nil)
     ;; (setq py-shell-name "ipython")
     ;; (setq py-which-bufname "IPython")
@@ -1094,6 +1096,8 @@
          "** %^{Heading}")))
 
 (setq org-default-refile-file "~/org/refile.org")
+;; (setq org-refile-targets ('(("projects.org" :maxlevel . 1)
+;;                             ("notes.org" :level . 2))))
 
 
 ;-----------------------------------------------------------------------------
