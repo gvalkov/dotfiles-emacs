@@ -45,7 +45,7 @@
                         ((yas/indent-line 'fixed))
                         nil nil nil)
                        ("ifmain" "if __name__ == '__main__':\n    $0" "if __name__ == '__main__': ..." nil nil nil nil nil nil)
-                       ("ipdb" "import ipdb; ipdb.set_trace()\n" "ipdb" nil nil nil nil nil nil)
+                       ("ipdb" "import ipdb; ipdb.set_trace()" "ipdb" nil nil nil nil nil nil)
                        ("lam" "lambda ${1:x}: $0\n" "lambda" nil nil nil nil nil nil)
                        ("lc" "[${1:i} for $1 in ${2:list}]\n$0\n" "list" nil
                         ("definitions")
@@ -53,7 +53,8 @@
                        ("ln" "logger = logging.getLogger(__name__)" "logger_name" nil nil nil nil nil nil)
                        ("log" "logger = logging.getLogger(\"${1:name}\")\nlogger.setLevel(logging.${2:level})\n" "logging" nil nil nil nil nil nil)
                        ("m" "def ${1:name}(self${2:, $3}):\n    $0\n" "method" nil nil nil nil nil nil)
-                       ("pdb" "import pdb; pdb.set_trace()\n" "pdb" nil nil nil nil nil nil)
+                       ("pdb" "import pdb; pdb.set_trace()" "pdb" nil nil nil nil nil nil)
+                       ("pp" "import pprint; pprint.pprint($0)" "pprint" nil nil nil nil nil nil)
                        ("!!" "#!/usr/bin/env ${1:$$(yas/choose-value '(\"python\" \"python2\" \"python3\" \"python2.7\" \"python3.3\"))}\n# -*- coding: utf-8; -*-\n\n$0\n" "preamble" nil nil nil nil nil nil)
                        ("p" "print($0)" "print" nil nil nil nil nil nil)
                        ("prop" "def ${1:foo}():\n   doc = \"\"\"${2:Doc string}\"\"\"\n   def fget(self):\n       return self._$1\n   def fset(self, value):\n       self._$1 = value\n   def fdel(self):\n       del self._$1\n   return locals()\n$1 = property(**$1())\n\n$0" "prop" nil nil nil nil nil nil)
@@ -98,4 +99,4 @@
                         nil nil nil nil)))
 
 
-;;; Do not edit! File generated at Thu Oct 16 20:05:37 2014
+;;; Do not edit! File generated at Sat Nov 22 15:54:20 2014
