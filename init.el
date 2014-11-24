@@ -259,6 +259,23 @@
           (evil-leader/set-leader ",")
           (global-evil-leader-mode)))
 
+(use-package evil-args
+  :init
+  (progn
+     (define-key evil-inner-text-objects-map "a" 'evil-inner-arg)
+     (define-key evil-outer-text-objects-map "a" 'evil-outer-arg)
+     (evil-leader/set-key
+       "an" 'evil-forward-arg
+       "ap" 'evil-backward-arg
+       "a`" 'evil-jump-out-args)))
+
+(use-package evil-jumper
+  :init
+  (setq evil-jumper-auto-center t)
+  (setq evil-jumper-file "~/.emacs.d/cache/evil-jumper")
+  (setq evil-jumper-auto-save-interval 1800))
+
+
 (use-package goto-chg)
 
 (use-package evil
@@ -414,6 +431,9 @@
           company-echo-delay 1
           company-auto-complete nil
           company-auto-complete-chars)
+
+    (define-key company-mode-map (kbd "C-j") 'company-select-next)
+    (define-key company-mode-map (kbd "C-k") 'company-select-previous)
     (setq company-backends '(company-elisp company-nxml company-clang company-cmake company-capf
                                            (company-dabbrev-code company-gtags company-etags company-keywords)
                                            company-files company-dabbrev))))
@@ -617,8 +637,28 @@
   :init
   (progn
     (setq ace-jump-mode-gray-background t)
-    (define-key evil-normal-state-map (kbd "SPC") 'ace-jump-char-mode)
-    (define-key evil-visual-state-map (kbd "SPC") 'ace-jump-char-mode)))
+    (define-key evil-normal-state-map (kbd "SPC") 'evil-ace-jump-word-mode)))
+
+;-----------------------------------------------------------------------------
+(use-package auto-highlight-symbol
+  :commands auto-highlight-symbol-mod
+  :config
+  (progn
+    (custom-set-variables
+     '(ahs-case-fold-search nil)
+     '(ahs-default-range 'ahs-range-whole-buffer)
+     '(ahs-idle-interval 0.25)
+     '(ahs-inhibit-face-list nil))
+    (evil-leader/set-key
+      "se" 'ahs-edit-mode
+      "sb" 'spacemacs/goto-last-searched-ahs-symbol
+      "sn" (lambda () (interactive) (eval '(progn (ahs-highlight-now) (ahs-forward)) nil))
+      "sN" (lambda () (interactive) (eval '(progn (ahs-highlight-now) (ahs-backward)) nil))
+      "srb" (lambda () (interactive) (eval '(ahs-change-range 'ahs-range-whole-buffer) nil))
+      "srd" (lambda () (interactive) (eval '(ahs-change-range 'ahs-range-display) nil))
+      "srf" (lambda () (interactive) (eval '(ahs-change-range 'ahs-range-beginning-of-defun) nil))
+      "sR" (lambda () (interactive) (eval '(ahs-change-range ahs-default-range) nil))
+      "th" 'auto-highlight-symbol-mode)))
 
 ;-----------------------------------------------------------------------------
 (use-package mark-multiple
@@ -701,6 +741,14 @@
     (add-to-list 'projectile-globally-ignored-directories "elpa")
     (add-to-list 'projectile-globally-ignored-directories ".cask")
     (add-to-list 'projectile-globally-ignored-directories ".cache")))
+
+;-----------------------------------------------------------------------------
+(defun spacemacs/init-bookmark ()
+  (use-package bookmark
+    :commands (bookmark-delete bookmark-jump bookmark-rename bookmark-set)
+    :config
+    (setq bookmark-default-file "~/.emacs.d/bookmarks"
+          bookmark-save-flag 1)))
 
 ;-----------------------------------------------------------------------------
 (use-package ibuffer
@@ -1152,6 +1200,7 @@
  "vq" 'vr/query-replace
  "sc" (lambda () (interactive)(switch-to-buffer "*scratch*"))
  "sw" 'helm-swoop
+ "er" 'evil-show-registers
  ;; "l" 'ido-switch-buffer
  ;; "f" 'ido-find-file
 

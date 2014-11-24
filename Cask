@@ -1,6 +1,9 @@
 (source gnu)
 (source melpa)
 
+(depends-on "evil-jumper")
+(depends-on "evil-visualstar")
+(depends-on "evil-args")
 (depends-on "ace-jump-buffer")
 (depends-on "ace-jump-mode")
 (depends-on "ag")
@@ -36,6 +39,7 @@
 (depends-on "evil")
 (depends-on "evil-exchange")
 (depends-on "evil-leader")
+(depends-on "evil-lisp-state")
 (depends-on "evil-nerd-commenter")
 (depends-on "evil-surround")
 (depends-on "expand-region")
