@@ -136,3 +136,5 @@
 (depends-on "zeal-at-point")
 (depends-on "zenburn-theme")
 (depends-on "zoom-frm")
+(depends-on "elpy")
+(depends-on "popwin")

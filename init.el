@@ -432,8 +432,8 @@
           company-auto-complete nil
           company-auto-complete-chars)
 
-    (define-key company-mode-map (kbd "C-j") 'company-select-next)
-    (define-key company-mode-map (kbd "C-k") 'company-select-previous)
+    ;; (define-key company-mode-map (kbd "C-j") 'company-select-next)
+    ;; (define-key company-mode-map (kbd "C-k") 'company-select-previous)
     (setq company-backends '(company-elisp company-nxml company-clang company-cmake company-capf
                                            (company-dabbrev-code company-gtags company-etags company-keywords)
                                            company-files company-dabbrev))))
@@ -551,14 +551,25 @@
 ;;       '(".org" ".py" ".sh" ".c" ".emacs" ".xml" ".el" ))
 
 ;-----------------------------------------------------------------------------
-(use-package helm
+(use-package popwin
   :init
+  (progn
+    (bind-key "C-c C-p" popwin:keymap)
+    (popwin-mode 1))
+  :config
+  (progn
+    (push '("^\*helm .+\*$" :regexp t) popwin:special-display-config)
+    (push '("^\*helm-.+\*$" :regexp t) popwin:special-display-config)))
+
+
+;-----------------------------------------------------------------------------
+(use-package helm
   :diminish helm-mode
+  :init
   (progn
     (setq helm-input-idle-delay 0.1)
     (setq helm-idle-delay 0.05)
     (setq helm-buffer-max-length 30)
-    (setq helm-M-x-always-save-history t)
     (setq helm-buffer-details-flag nil)
     (setq helm-quick-update t)
     (setq helm-candidate-number-limit nil)
@@ -570,6 +581,10 @@
     (setq helm-ff-lynx-style-map nil)
     (setq helm-ff-auto-update-initial-value nil)
     (setq helm-yank-symbol-first t)
+
+    (setq helm-M-x-requires-pattern t)
+    (setq helm-M-x-always-save-history t)
+    (setq helm-split-window-in-side-p t)
 
     (setq helm-c-boring-file-regexp
           (rx (or
@@ -594,6 +609,7 @@
 
     :config
     (progn
+      (define-key helm-map (kbd "<f11>") 'my/helm-fullscreen)
       (define-key helm-map (kbd "C-j") 'helm-next-line)
       (define-key helm-map (kbd "C-k") 'helm-previous-line)))
 
@@ -641,7 +657,7 @@
 
 ;-----------------------------------------------------------------------------
 (use-package auto-highlight-symbol
-  :commands auto-highlight-symbol-mod
+  :commands auto-highlight-symbol-mode
   :config
   (progn
     (custom-set-variables
@@ -999,12 +1015,17 @@
     (add-hook 'web-mode-hook 'enable-tab-width-2)))
 
 ;-----------------------------------------------------------------------------
+(use-package virtualenvwrapper
+  (setq venv-location "~/.virtualenvs/"))
+
+;-----------------------------------------------------------------------------
 (use-package python-environment
   :init
   (progn
     (setq python-environment-directory "~/.emacs.d/cache/python-environments")))
 
 ;-----------------------------------------------------------------------------
+; pip install rope jedi flake8 importmagic
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :interpreter ("python" . python-mode)
@@ -1025,6 +1046,7 @@
 
     (setq python-shell-interpreter "python")
     (setq python-fill-docstring-style 'django)
+
     ;; (setq-default python-skeleton-autoinsert nil)
     ;; (setq py-shell-name "ipython")
     ;; (setq py-which-bufname "IPython")
@@ -1040,6 +1062,18 @@
                (setq my-switch-to-repl-func 'python-shell-switch-to-shell
                      my-send-region-to-repl-func 'python-shell-send-region
                      my-run-code-interpreter "python")))))
+
+(setq ropemacs-codeassist-maxfixes 5
+      ropemacs-global-prefix "C-c C-p"
+      ropemacs-guess-project t
+      ropemacs-enable-autoimport t
+      ropemacs-completing-read-function 'completing-read)
+(autoload 'pymacs-apply "pymacs")
+(autoload 'pymacs-call "pymacs")
+(autoload 'pymacs-eval "pymacs" nil t)
+(autoload 'pymacs-exec "pymacs" nil t)
+(autoload 'pymacs-load "pymacs" nil t)
+(autoload 'pymacs-autoload "pymacs")
 
 ;-----------------------------------------------------------------------------
 (use-package ruby
@@ -1152,6 +1186,10 @@
 (setq org-export-htmlize-output-type 'css)
 
 ;;;---------------------------------------------------------------------------
+;;; Mail
+;;;---------------------------------------------------------------------------
+
+;;;---------------------------------------------------------------------------
 ;;; Keymaps
 ;;;---------------------------------------------------------------------------
 (global-set-key [down-mouse-3] 'x-menu-bar-open)
@@ -1195,7 +1233,8 @@
  "u" 'undo-tree-visualize
  "i" 'helm-semantic-or-imenu
  "r" 'dired-jump
- "p" 'helm-show-kill-ring
+ "y" 'helm-show-kill-ring
+ "p" 'helm-projectile
  "vr" 'vr/replace
  "vq" 'vr/query-replace
  "sc" (lambda () (interactive)(switch-to-buffer "*scratch*"))

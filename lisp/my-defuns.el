@@ -1,3 +1,9 @@
+(defun my/helm-fullscreen-toggle ()
+  (interactive)
+  ()
+  (with-selected-window (helm-window)
+    (delete-other-windows)))
+
 (defun my/reload-emacs-config ()
   (interactive)
   (let ((init-el  "~/.emacs.d/init.el"))
@@ -160,6 +166,43 @@ to abort the minibuffer."
   (url-insert-file-contents url))
 
 ;-----------------------------------------------------------------------------
+; Skip uninteresing buffers.
+; http://stackoverflow.com/questions/14323516/make-emacs-next-buffer-skip-messages-buffer
+(defun my/change-buffer (change-buffer)
+  "Call CHANGE-BUFFER until current buffer is not in `my-boring-buffers'."
+  (let ((initial (current-buffer)))
+    (funcall change-buffer)
+    (let ((first-change (current-buffer)))
+      (catch 'loop
+        (while (member (buffer-name) my/boring-buffers)
+          (funcall change-buffer)
+          (when (eq (current-buffer) first-change)
+            (switch-to-buffer initial)
+            (throw 'loop t)))))))
+
+(defun my/next-buffer ()
+  "`next-buffer' that skips `my/boring-buffers'."
+  (interactive)
+  (my/change-buffer 'next-buffer))
+
+(defun my/previous-buffer ()
+  "`previous-buffer' that skips `my/boring-buffers'."
+  (interactive)
+  (my/change-buffer 'previous-buffer))
+
+;-----------------------------------------------------------------------------
 ; Org mode
+
+;-----------------------------------------------------------------------------
+; Copy-Pasta
+;-----------------------------------------------------------------------------
+
+;;; Stefan Monnier <foo at acm.org>. It is the opposite of fill-paragraph
+(defun unfill-paragraph (&optional region)
+  "Takes a multi-line paragraph and makes it into a single line of text."
+  (interactive (progn (barf-if-buffer-read-only) '(t)))
+  (let ((fill-column (point-max)))
+    (fill-paragraph nil region)))
+
 
 (provide 'my-defuns)
