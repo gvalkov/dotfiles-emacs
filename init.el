@@ -257,6 +257,7 @@
 (use-package evil-leader
   :init (progn
           (evil-leader/set-leader ",")
+          (setq evil-leader/in-all-states t)
           (global-evil-leader-mode)))
 
 (use-package evil-args
@@ -271,10 +272,13 @@
 
 (use-package evil-jumper
   :init
-  (setq evil-jumper-auto-center t)
-  (setq evil-jumper-file "~/.emacs.d/cache/evil-jumper")
-  (setq evil-jumper-auto-save-interval 1800))
+  (progn
+    (setq evil-jumper-auto-center t)
+    (setq evil-jumper-file "~/.emacs.d/cache/evil-jumper")
+    (setq evil-jumper-auto-save-interval 1800)))
 
+(use-package sackspace
+  :init (sackspace-global-mode 1))
 
 (use-package goto-chg)
 
@@ -287,6 +291,8 @@
     (setq evil-search-module 'evil-search)
     (setq evil-magic 'very-magic)
     ;(setq evil-esc-delay 0)
+    (setq evil-move-cursor-back t)
+    (setq evil-cross-lines nil)
 
     ; look and feel
     (setq evil-normal-state-cursor '("white" box))
@@ -334,7 +340,24 @@
       (setq evilnc-hotkey-comment-operator "g#"))
 
     (use-package evil-surround
-      :init (global-evil-surround-mode 1))))
+      :init
+      (progn
+        (global-evil-surround-mode 1)
+        ; inverse the meaning
+        (setq-default evil-surround-pairs-alist '((?\( . ("(" . ")"))
+                                                  (?\[ . ("[" . "]"))
+                                                  (?\{ . ("{" . "}"))
+                                                  (?\) . ("( " . " )"))
+                                                  (?\] . ("[ " . " ]"))
+                                                  (?\} . ("{ " . " }"))
+                                                  (?> . ("< " . " >"))
+                                                  (?# . ("#{" . "}"))
+                                                  (?p . ("(" . ")"))
+                                                  (?b . ("[" . "]"))
+                                                  (?B . ("{" . "}"))
+                                                  (?< . ("<" . ">"))
+                                                  (?t . evil-surround-read-tag)))
+        ))))
 
 ;-----------------------------------------------------------------------------
 (global-set-key [escape] 'keyboard-escape-quit)
