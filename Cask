@@ -4,6 +4,7 @@
 (depends-on "evil-jumper")
 (depends-on "evil-visualstar")
 (depends-on "evil-args")
+(depends-on "evil-numbers")
 (depends-on "ace-jump-buffer")
 (depends-on "ace-jump-mode")
 (depends-on "ag")

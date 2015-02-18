@@ -293,6 +293,7 @@
     ;(setq evil-esc-delay 0)
     (setq evil-move-cursor-back t)
     (setq evil-cross-lines nil)
+    ;; (evil-set-toggle-key "<pause>")
 
     ; look and feel
     (setq evil-normal-state-cursor '("white" box))
@@ -306,7 +307,7 @@
     ;; (setq evil-visual-state-tag (propertize "V" 'face '((:background "grey80" :foreground "black"))))
     ;; (setq evil-operator-state-tag (propertize "O" 'face '((:background "purple"))))
 
-    ; initial program states
+    ; initial mode states
     (evil-set-initial-state 'dired 'emacs)
     (evil-set-initial-state 'magit-branch-manager-mode 'emacs)
     (evil-set-initial-state 'magit-commit-mode 'emacs)
@@ -315,7 +316,12 @@
     (evil-set-initial-state 'log-view-mode 'emacs)
     (evil-set-initial-state 'ibuffer-mode 'normal)
     (evil-set-initial-state 'ack-mode 'normal)
-    (evil-set-initial-state 'comint-mode 'insert)
+    (evil-set-initial-state 'inferior-emacs-lisp-mode 'emacs)
+    (evil-set-initial-state 'comint-mode 'emacs)
+    (evil-set-initial-state 'shell-mode 'emacs)
+    (evil-set-initial-state 'term-mode 'emacs)
+    (evil-set-initial-state 'bc-menu-mode 'emacs)
+    (evil-set-initial-state 'erc-mode 'normal)
 
     (evil-defmap evil-ex-completion-map
       (kbd "C-r") #'evil-ex-paste-from-register ; registers in ex-mode
@@ -323,6 +329,10 @@
       (kbd "<s-left>") 'move-beginning-of-line
       (kbd "<s-right>") 'move-beginning-of-line
       (kbd "<s-backspace>") 'evil-delete-whole-line)
+
+    (evil-defmap evil-normal-state-map
+       "+" 'evil-numbers/inc-at-pt
+       "-" 'evil-numbers/dec-at-pt)
 
     ;; select paste immediately after paste
     ;; (define-key evil-normal-state-map "p"
@@ -343,21 +353,27 @@
       :init
       (progn
         (global-evil-surround-mode 1)
-        ; inverse the meaning
-        (setq-default evil-surround-pairs-alist '((?\( . ("(" . ")"))
-                                                  (?\[ . ("[" . "]"))
-                                                  (?\{ . ("{" . "}"))
-                                                  (?\) . ("( " . " )"))
-                                                  (?\] . ("[ " . " ]"))
-                                                  (?\} . ("{ " . " }"))
-                                                  (?> . ("< " . " >"))
-                                                  (?# . ("#{" . "}"))
-                                                  (?p . ("(" . ")"))
-                                                  (?b . ("[" . "]"))
-                                                  (?B . ("{" . "}"))
-                                                  (?< . ("<" . ">"))
-                                                  (?t . evil-surround-read-tag)))
-        ))))
+
+        (add-hooks! '(emacs-lisp-mode-hook lisp-mode-hook)
+                    (push '(?` . ("`" . "'")) evil-surround-pairs-alist))
+
+        (add-hooks! '(markdown-mode-hook rst-mode-hook python-mode-hook)
+                    (push '(?~ . ("``" . "``")) evil-surround-pairs-alist))
+
+        (setq-default evil-surround-pairs-alist
+                      '((?\( . ("(" . ")"))
+                        (?\[ . ("[" . "]"))
+                        (?\{ . ("{" . "}"))
+                        (?\) . ("( " . " )"))
+                        (?\] . ("[ " . " ]"))
+                        (?\} . ("{ " . " }"))
+                        (?> . ("< " . " >"))
+                        (?# . ("#{" . "}"))
+                        (?p . ("(" . ")"))
+                        (?b . ("[" . "]"))
+                        (?B . ("{" . "}"))
+                        (?< . ("<" . ">"))
+                        (?t . evil-surround-read-tag)))))))
 
 ;-----------------------------------------------------------------------------
 (global-set-key [escape] 'keyboard-escape-quit)

@@ -14,6 +14,11 @@
 (defmacro add-hook! (hook &rest body)
   `(add-hook ,hook (lambda() ,@body)))
 
+(defmacro add-hooks! (hooks &rest body)
+  `(let ((fun #'(lambda() ,@body)))
+     (dolist (hook ,hooks)
+       (add-hook hook fun))))
+
 (defmacro evil-defmap (map &rest body)
   `(evil-define-key nil ,map ,@body))
 
