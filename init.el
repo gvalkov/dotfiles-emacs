@@ -1,4 +1,4 @@
-; -*- elisp -*
+;; -*- elisp -*
 
 (setq basedir (expand-file-name "~/.emacs.d/"))
 ;; (setq default-directory "~/source/")
@@ -241,11 +241,12 @@
   (progn
     (setq recentf-save-file "~/.emacs.d/cache/recentf")
     (setq recentf-auto-cleanup 'never)
-    (setq recentf-max-saved-items 300)
+    (setq recentf-max-saved-items 500)
     (setq recentf-max-menu-items 40)
     (setq recentf-exclude
           '("/tmp/" "\\.ido\\.last" "ido.last" "\\.git/config" "\\.git/COMMIT_EDITMSG"
             "cache/recentf" "\\.emacs\\.d/elpa/.*" "\\.emacs\\.d/.cask/.*"  ))
+    (add-hook 'kill-emacs-hook #'recentf-cleanup)
     (recentf-mode 1)))
 
 ;-----------------------------------------------------------------------------
@@ -331,8 +332,10 @@
       (kbd "<s-backspace>") 'evil-delete-whole-line)
 
     (evil-defmap evil-normal-state-map
-       "+" 'evil-numbers/inc-at-pt
-       "-" 'evil-numbers/dec-at-pt)
+       "+"  'evil-numbers/inc-at-pt
+       "-"  'evil-numbers/dec-at-pt
+       "[e" 'previous-error
+       "]e" 'next-error)
 
     ;; select paste immediately after paste
     ;; (define-key evil-normal-state-map "p"
@@ -494,6 +497,7 @@
     ;;   (shut-up (yas-exit-all-snippets)))
     ;; Only load personal snippets
     (setq yas-verbosity 1)
+    (setq yas-triggers-in-field t)
     (setq yas-snippet-dirs '("~/.emacs.d/snippets" yas-installed-snippets-dir))
     (setq yas-prompt-functions '(yas-ido-prompt yas-no-prompt))
     (after auto-complete
@@ -533,6 +537,7 @@
 
 ;-----------------------------------------------------------------------------
 ; tramp
+(setq tramp-persistency-file-name "~/emacs/cache/tramp")
 (setq tramp-default-method "ssh")
 ;; (setq tramp-debug-buffer t)
 ;; (setq tramp-verbose 10)
@@ -552,7 +557,7 @@
 
 (ido-mode 1)
 ;; (ido-vertical-mode 1)
-(ido-everywhere 1)
+;; (ido-everywhere 1)
 (ido-ubiquitous-mode 1)
 (flx-ido-mode 1)
 
@@ -606,7 +611,8 @@
   :diminish helm-mode
   :init
   (progn
-    (setq helm-input-idle-delay 0.1)
+    (setq helm-input-idle-delay 0)
+    (setq helm-quick-update t)
     (setq helm-idle-delay 0.05)
     (setq helm-buffer-max-length 30)
     (setq helm-buffer-details-flag nil)
@@ -736,7 +742,23 @@
 ;-----------------------------------------------------------------------------
 (use-package smartparens
   :init
-  (smartparens-global-mode t))
+  (progn
+    (smartparens-global-mode t)
+
+    (setq sp-highlight-pair-overlay nil
+          sp-navigate-close-if-unbalanced t)
+
+    (sp-with-modes '(emacs-lisp-mode
+                     inferior-emacs-lisp-mode
+                     lisp-interaction-mode
+                     lisp-mode)
+      (sp-local-pair "'" nil :actions nil)
+      (sp-local-pair "`" "'" :when '(sp-in-string-p) :actions '(insert wrap)))
+
+    (sp-with-modes '(text-mode)
+      (sp-local-pair "`" "'" :actions '(insert wrap)))
+
+    ))
 
 ;-----------------------------------------------------------------------------
 ; multiple-cursors (only in emacs mode)
@@ -772,6 +794,12 @@
 ;-----------------------------------------------------------------------------
 ; calendar config
 (setq calendar-week-start-day 1)
+(setq calendar-date-style 'european)
+(setq calendar-mark-holidays-flag t)
+
+(setq calendar-time-display-form
+      '(24-hours ":" minutes (and time-zone (concat " (" time-zone ")"))))
+
 (setq calendar-intermonth-text
       '(propertize
         (format "%2d"
@@ -828,7 +856,7 @@
     (setq ibuffer-formats
           '((mark modified read-only vc-status-mini " "
                   (name 18 18 :left :elide) " "
-                  (size-human 9 -1 :right) " "
+                  (size 9 -1 :right) " "
                   (mode 16 16 :left :elide) " "
                   (vc-status 16 16 :left) " "
                   filename-and-process)))
@@ -845,13 +873,15 @@
       "gg"  'evil-goto-first-line)
 
     (setq ibuffer-saved-filter-groups
-          `(("custom"
+          `(("default"
              ("Config" (or (filename . ".emacs.d")
                            (filename . ,(expand-file-name "~/.config"))
                            (filename . ,(expand-file-name "~/.dotfiles")))))
             ("Org"    (or (mode . org-mode)
+                          (mode . org-mode-agenda)
                           (filename . "OrgMode")))
-            ("Magit"  (name . "\*magit"))
+            ("Magit"  (or (name . "\\*magit-.*\\*")
+                          (mode . magit-mode)))
             ("Dired"  (mode . dired-mode))
             ("ERC"    (mode . erc-mode))
             ("Emacs"  (or (name . "^\\*scratch\\*$")
@@ -869,13 +899,15 @@
         (ibuffer-jump-to-buffer recent-buffer-name)))
     (ad-activate 'ibuffer)
 
-    (add-hook 'ibuffer-mode-hook
-              (lambda ()
-                (ibuffer-vc-set-filter-groups-by-vc-root)
-                ;; (ibuffer-do-sort-by-filename/process)
-                ;; (ibuffer-tramp-set-filter-groups-by-tramp-connection)
-                ;; (ibuffer-do-sort-by-alphabetic)
-                (ibuffer-switch-to-saved-filter-groups "custom")))))
+    (require 'ibuffer-projectile)
+    (add-hook! 'ibuffer-mode-hook
+               (progn
+                 (ibuffer-tramp-set-filter-groups-by-tramp-connection)
+                 (ibuffer-tramp-set-filter-groups-by-tramp-connection)
+                 (ibuffer-vc-set-filter-groups-by-vc-root)
+                 (ibuffer-do-sort-by-alphabetic)
+                 ;; (ibuffer-switch-to-saved-filter-groups "default")
+                 (ibuffer-auto-mode 1)))))
 
 ;-----------------------------------------------------------------------------
 (use-package rainbow-delimiters
@@ -1159,6 +1191,18 @@
 (associate-mode "Makefile\\(\\..*\\)?" makefile-mode)
 (associate-mode "CMakeLists\\.txt\\'" cmake-mode)
 (associate-mode "\\.cmake\\'" cmake-mode)
+
+;;;---------------------------------------------------------------------------
+;;; Program associations
+;;;---------------------------------------------------------------------------
+(use-package openwith
+  :init
+  (progn
+    (add-to-list 'mm-inhibit-file-name-handlers 'openwith-file-handler)
+    (setq openwith-associations
+          (list
+           (list (openwith-make-extension-regexp '("pdf")) "zathura" '(file))))
+    (openwith-mode t)))
 
 ;;;---------------------------------------------------------------------------
 ;;; Org mode

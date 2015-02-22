@@ -204,5 +204,13 @@ to abort the minibuffer."
   (let ((fill-column (point-max)))
     (fill-paragraph nil region)))
 
+(defun my/region-to-snippet (begin end)
+  "Write new snippet based on current region."
+  (interactive "r")
+  (let ((region (buffer-substring begin end)))
+    (yas-new-snippet)
+    (save-excursion
+      (goto-char (point-max))
+      (insert region))))
 
 (provide 'my-defuns)

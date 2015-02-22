@@ -16,7 +16,10 @@
 
 (setq org-fast-tag-selection-single-key 'expert)
 (setq org-tags-column 80)
-(setq org-link-abbrev-alist '(("attach" . org-attach-expand-link)))
+(setq org-link-abbrev-alist
+      '(("attach" . org-attach-expand-link)
+        ("gmap" . "http://maps.google.com/maps?q=%s")
+        ("omap" . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")))
 
 ;-----------------------------------------------------------------------------
 
@@ -37,7 +40,6 @@
   (kbd "M-K") 'org-metaup
   (kbd "M-j") 'org-shiftleft
   (kbd "M-k") 'org-shiftright
-  (kbd "C-o") 'evil-org-insert-heading
   (kbd "C-j") 'outline-next-visible-heading
   (kbd "C-k") 'outline-previous-visible-heading
   (kbd "-")   'org-cycle-list-bullet
@@ -50,6 +52,22 @@
   "zc" 'hide-subtree
   "zC" 'hide-all)
 
+(evil-define-key 'insert org-mode-map
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
+(evil-define-key 'insert orgstruct-mode-map
+  (kbd "M-j") 'org-shiftleft
+  (kbd "M-k") 'org-shiftright
+  (kbd "M-H") 'org-metaleft
+  (kbd "M-J") 'org-metadown
+  (kbd "M-K") 'org-metaup
+  (kbd "M-L") 'org-metaright)
+
 (evil-define-key 'normal orgstruct-mode-map
   (kbd "RET") 'org-open-at-point
   (kbd "M-L") 'org-metaright
@@ -58,7 +76,6 @@
   (kbd "M-K") 'org-metaup
   (kbd "M-j") 'org-shiftleft
   (kbd "M-k") 'org-shiftright
-  (kbd "C-o") 'evil-org-insert-heading
   (kbd "C-j") 'outline-next-visible-heading
   (kbd "C-k") 'outline-previous-visible-heading
   (kbd "-")   'org-cycle-list-bullet
