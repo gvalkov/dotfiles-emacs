@@ -11,7 +11,6 @@
 (define-key evil-normal-state-map (kbd ",r") 'org-capture)
 (define-key global-map (kbd "<f6>" ) 'org-capture)
 
-
 (setq org-deadline-warning-days 30)
 
 (setq org-fast-tag-selection-single-key 'expert)

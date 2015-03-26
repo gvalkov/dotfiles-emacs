@@ -243,6 +243,7 @@
     (setq recentf-auto-cleanup 'never)
     (setq recentf-max-saved-items 500)
     (setq recentf-max-menu-items 40)
+    (setq recentf-auto-save-timer (run-with-idle-timer 600 t 'recentf-save-list))
     (setq recentf-exclude
           '("/tmp/" "\\.ido\\.last" "ido.last" "\\.git/config" "\\.git/COMMIT_EDITMSG"
             "cache/recentf" "\\.emacs\\.d/elpa/.*" "\\.emacs\\.d/.cask/.*"  ))
@@ -278,8 +279,8 @@
     (setq evil-jumper-file "~/.emacs.d/cache/evil-jumper")
     (setq evil-jumper-auto-save-interval 1800)))
 
-(use-package sackspace
-  :init (sackspace-global-mode 1))
+;; (use-package sackspace
+;;   :init (sackspace-global-mode 1))
 
 (use-package goto-chg)
 
@@ -818,6 +819,7 @@
   (progn
     (projectile-global-mode)
     (setq projectile-indexing-method 'alien
+          projectile-sort-order 'recentf
           projectile-cache-file "~/.emacs.d/cache/projectile.cache"
           projectile-known-projects-file "~/.emacs.d/cache/projectile-bookmarks.eld"
           projectile-enable-caching t)
@@ -1207,12 +1209,45 @@
 ;;;---------------------------------------------------------------------------
 ;;; Org mode
 ;;;---------------------------------------------------------------------------
+(use-package org
+  :mode ("\\.org$" . org-mode)
+  :defer t
+  :init
+  (progn
+    (setq org-log-done 'time)
+    (setq org-link-abbrev-alist
+          '(("attach" . org-attach-expand-link)
+            ("gmap" . "http://maps.google.com/maps?q=%s")
+            ("omap" . "http://nominatim.openstreetmap.org/search?q=%s&polygon=1")))
+
+    (evil-leader/set-key-for-mode 'org-mode
+      "oc" 'org-capture
+      "od" 'org-deadline
+      "oe" 'org-export-dispatch
+      "oi" 'org-clock-in
+      "oo" 'org-clock-out
+      "om" 'org-ctrl-c-ctrl-c
+      "or" 'org-refile
+      "os" 'org-schedule
+      "oa" 'org-agenda
+      "oA" 'org-archive-subtree
+      "oC" 'evil-org-recompute-clocks
+      "ol" 'evil-org-open-links
+      "ot" 'org-show-todo-tre))
+  :config
+  (progn
+    (eval-after-load "org-agenda"
+      '(progn
+         (define-key org-agenda-mode-map "j" 'org-agenda-next-line)
+         (define-key org-agenda-mode-map "k" 'org-agenda-previous-line)))
+    (use-package evil-org)
+    (add-hook 'org-mode-hook 'evil-org-mode)))
+
 (setq org-startup-indented t)
 (setq org-startup-folded 0)
 (setq org-cycle-separator-lines 1)
 
 (setq org-src-fontify-natively t)
-(setq org-log-done 'time)
 (setq org-log-into-drawer t)
 (setq org-completion-use-ido t)
 (setq org-enforce-todo-dependencies t)
@@ -1221,6 +1256,7 @@
 
 ;-----------------------------------------------------------------------------
 ; default locations
+(setq org-default-refile-file "~/org/refile.org")
 (setq org-id-locations-file "~/.emacs.d/cache/org-id-locations")
 (setq org-directory "~/org")
 (setq org-default-notes-file "~/org/notes.org")
@@ -1249,21 +1285,6 @@
         ("@errands" . ?e)
         ("@reading" . ?r)
         ("projects" . ?q)))
-
-(setq org-capture-templates
-      '(("t" "todo" entry (file+headline org-default-refile-file "Inbox")
-         "* TODO %?\n %i\n")
-        ("c" "Changelog" entry (concat (projectile-project-root) "/CHANGELOG.org" "Unsorted")
-         "%u %? :unsorted:\n%i" :prepend t)
-        ("n" "note" entry (file+datetree org-default-refile-file)
-         "* %^{Description} %^g %? Added: %U")
-        ("j" "journal" entry (file+datetree "~/org/journal.org")
-         "** %^{Heading}")))
-
-(setq org-default-refile-file "~/org/refile.org")
-;; (setq org-refile-targets ('(("projects.org" :maxlevel . 1)
-;;                             ("notes.org" :level . 2))))
-
 
 ;-----------------------------------------------------------------------------
 (setq org-export-htmlize-output-type 'css)
