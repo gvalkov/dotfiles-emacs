@@ -257,10 +257,11 @@
 ;-----------------------------------------------------------------------------
 ; evil
 (use-package evil-leader
-  :init (progn
-          (evil-leader/set-leader ",")
-          (setq evil-leader/in-all-states t)
-          (global-evil-leader-mode)))
+  :config
+  (progn
+    (evil-leader/set-leader ",")
+    (setq evil-leader/in-all-states t)
+    (global-evil-leader-mode)))
 
 (use-package evil-args
   :init
@@ -322,6 +323,8 @@
     (evil-set-initial-state 'comint-mode 'emacs)
     (evil-set-initial-state 'shell-mode 'emacs)
     (evil-set-initial-state 'term-mode 'emacs)
+    (evil-set-initial-state 'artist-mode 'emacs)
+    (evil-set-initial-state 'image-mode 'emacs)
     (evil-set-initial-state 'bc-menu-mode 'emacs)
     (evil-set-initial-state 'erc-mode 'normal)
 
@@ -350,7 +353,7 @@
       :init (evil-exchange-install))
 
     (use-package evil-nerd-commenter
-      :pre-load
+      :config
       (setq evilnc-hotkey-comment-operator "g#"))
 
     (use-package evil-surround
@@ -426,10 +429,10 @@
 
 ;-----------------------------------------------------------------------------
 (use-package volatile-highlights
-  :init (volatile-highlights-mode t)
   :diminish ""
   :config
   (progn
+    (volatile-highlights-mode t)
     (vhl/give-advice-to-make-vhl-on-changes evil-paste-after)
     (vhl/give-advice-to-make-vhl-on-changes evil-paste-before)
     (vhl/give-advice-to-make-vhl-on-changes evil-paste-pop)))
@@ -464,8 +467,8 @@
 
 ;-----------------------------------------------------------------------------
 (use-package company
-  :diminish company
-  :init
+  :diminish company-mode
+  :config
   (progn
     (global-company-mode 1)
     (setq company-idle-delay 0.35
@@ -485,13 +488,6 @@
 (use-package yasnippet
   :mode (("emacs.+/snippets/" . snippet-mode))
   :diminish yas-minor-mode
-  :pre-load
-  (progn
-    (defvar yas-minor-mode-map
-      (let ((map (make-sparse-keymap)))
-        (evil-define-key 'insert map [(tab)] 'yas-expand)
-        (evil-define-key 'insert map (kbd "TAB") 'yas-expand)
-        map)))
   :config
   (progn
     ;; (defadvice evil-force-normal-state (before evil-esc-quit-yasnippet activate)
@@ -510,6 +506,11 @@
     (yas-reload-all))
   :init
   (progn
+    (defvar yas-minor-mode-map
+      (let ((map (make-sparse-keymap)))
+        (evil-define-key 'insert map [(tab)] 'yas-expand)
+        (evil-define-key 'insert map (kbd "TAB") 'yas-expand)
+        map))
     (add-hook 'prog-mode-hook 'yas-minor-mode)
     (add-hook 'snippet-mode-hook 'yas-minor-mode)
     (add-hook 'markdown-mode-hook 'yas-minor-mode)
@@ -597,12 +598,10 @@
 
 ;-----------------------------------------------------------------------------
 (use-package popwin
-  :init
-  (progn
-    (bind-key "C-c C-p" popwin:keymap)
-    (popwin-mode 1))
   :config
   (progn
+    (popwin-mode 1)
+    (bind-key "C-c C-p" popwin:keymap)
     (push '("^\*helm .+\*$" :regexp t) popwin:special-display-config)
     (push '("^\*helm-.+\*$" :regexp t) popwin:special-display-config)))
 
@@ -760,6 +759,11 @@
       (sp-local-pair "`" "'" :actions '(insert wrap)))
 
     ))
+
+;-----------------------------------------------------------------------------
+(eval-after-load 'artist-mode
+  '(progn
+     (define-key artist-mode-map [down-mouse-3] 'artist-mouse-choose-operation)))
 
 ;-----------------------------------------------------------------------------
 ; multiple-cursors (only in emacs mode)
@@ -1089,6 +1093,7 @@
 
 ;-----------------------------------------------------------------------------
 (use-package virtualenvwrapper
+  :config
   (setq venv-location "~/.virtualenvs/"))
 
 ;-----------------------------------------------------------------------------
@@ -1198,7 +1203,7 @@
 ;;; Program associations
 ;;;---------------------------------------------------------------------------
 (use-package openwith
-  :init
+  :config
   (progn
     (add-to-list 'mm-inhibit-file-name-handlers 'openwith-file-handler)
     (setq openwith-associations

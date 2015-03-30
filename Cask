@@ -40,7 +40,6 @@
 (depends-on "evil")
 (depends-on "evil-exchange")
 (depends-on "evil-leader")
-(depends-on "evil-lisp-state")
 (depends-on "evil-nerd-commenter")
 (depends-on "evil-surround")
 (depends-on "expand-region")
