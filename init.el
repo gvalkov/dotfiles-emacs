@@ -38,6 +38,7 @@
 
 ;(setq use-package-verbose t)
 (require 'use-package)
+(require 'dash)
 
 ;-----------------------------------------------------------------------------
 ; general settings
@@ -754,12 +755,13 @@
 
 ;-----------------------------------------------------------------------------
 (use-package smartparens
-  :init
+  :config
   (progn
     (smartparens-global-mode t)
 
     (setq sp-highlight-pair-overlay nil
           sp-navigate-close-if-unbalanced t)
+
 
     (sp-with-modes '(emacs-lisp-mode
                      inferior-emacs-lisp-mode
@@ -769,9 +771,7 @@
       (sp-local-pair "`" "'" :when '(sp-in-string-p) :actions '(insert wrap)))
 
     (sp-with-modes '(text-mode)
-      (sp-local-pair "`" "'" :actions '(insert wrap)))
-
-    ))
+      (sp-local-pair "`" "'" :actions '(insert wrap)))))
 
 ;-----------------------------------------------------------------------------
 (eval-after-load 'artist-mode
@@ -843,14 +843,6 @@
     (add-to-list 'projectile-globally-ignored-directories "elpa")
     (add-to-list 'projectile-globally-ignored-directories ".cask")
     (add-to-list 'projectile-globally-ignored-directories ".cache")))
-
-;-----------------------------------------------------------------------------
-(defun spacemacs/init-bookmark ()
-  (use-package bookmark
-    :commands (bookmark-delete bookmark-jump bookmark-rename bookmark-set)
-    :config
-    (setq bookmark-default-file "~/.emacs.d/bookmarks"
-          bookmark-save-flag 1)))
 
 ;-----------------------------------------------------------------------------
 (use-package ibuffer
@@ -943,7 +935,7 @@
 ;; (setq dired-recursive-copies 'always)
 (setq dired-dwim-target t)
 (setq dired-auto-revert-buffer t)
-(toggle-diredp-find-file-reuse-dir 1)
+;;(toggle-diredp-find-file-reuse-dir 1)
 (setq diredp-hide-details-initially-flag nil)
 (setq diredp-hide-details-propagate-flag nil)
 
@@ -993,14 +985,23 @@
           magit-auto-revert-mode-lighter nil
           magit-completing-read-function 'magit-ido-completing-read)
 
-     (evil-add-hjkl-bindings magit-status-mode-map 'emacs
-       "K" 'magit-discard-item
-       "l" 'magit-key-mode-popup-logging
-       "j" 'magit-goto-next-section
-       "k" 'magit-goto-previous-section
-       "u" 'magit-unstage-item
-       "s" 'magit-stage-item
-       "h" 'magit-toggle-diff-refine-hunk)))
+    ;; (add-hook 'magit-log-edit-mode-hook 'auto-capitalize-mode)
+    (add-hook 'magit-log-edit-mode-hook 'flyspell-mode)
+    ;; (add-hook 'magit-log-edit-mode-hook 'artbollocks-mode)
+
+    (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
+    ;; (add-hook 'git-commit-mode-hook 'auto-capitalize-mode)
+    ;; (add-hook 'git-commit-mode-hook 'artbollocks-mode)
+    (add-hook! 'git-commit-mode-hook (toggle-save-place 0))
+
+    (evil-add-hjkl-bindings magit-status-mode-map 'emacs
+      "K" 'magit-discard-item
+      "l" 'magit-key-mode-popup-logging
+      "j" 'magit-goto-next-section
+      "k" 'magit-goto-previous-section
+      "u" 'magit-unstage-item
+      "s" 'magit-stage-item
+      "h" 'magit-toggle-diff-refine-hunk)))
 
 ;-----------------------------------------------------------------------------
 (use-package zeal-at-point
