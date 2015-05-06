@@ -1268,6 +1268,7 @@
 (setq org-cycle-separator-lines 1)
 
 (setq org-src-fontify-natively t)
+(setq org-log-done 'time)
 (setq org-log-into-drawer t)
 (setq org-completion-use-ido t)
 (setq org-enforce-todo-dependencies t)
@@ -1305,6 +1306,13 @@
         ("@errands" . ?e)
         ("@reading" . ?r)
         ("projects" . ?q)))
+
+;-----------------------------------------------------------------------------
+; org-babel
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((sh . t)
+   (python . t)))
 
 ;-----------------------------------------------------------------------------
 (setq org-export-htmlize-output-type 'css)
