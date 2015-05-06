@@ -485,9 +485,11 @@
   :config
   (progn
     (global-company-mode 1)
-    (setq company-idle-delay 0.35
+    (setq company-idle-delay 0.1
           company-tooltip-limit 30
-          company-minimum-prefix-length 3
+          company-minimum-prefix-length 2
+          company-show-numbers t
+          ;; company-require-match nil
           company-echo-delay 1
           company-auto-complete nil
           company-auto-complete-chars)
@@ -495,8 +497,8 @@
     ;; (define-key company-mode-map (kbd "C-j") 'company-select-next)
     ;; (define-key company-mode-map (kbd "C-k") 'company-select-previous)
     (setq company-backends '(company-elisp company-nxml company-clang company-cmake company-capf
-                                           (company-dabbrev-code company-gtags company-etags company-keywords)
-                                           company-files company-dabbrev))))
+                          (company-dabbrev-code company-gtags company-etags company-keywords)
+                          company-files company-dabbrev))))
 
 ;-----------------------------------------------------------------------------
 (use-package yasnippet
