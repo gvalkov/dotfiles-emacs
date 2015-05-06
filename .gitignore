@@ -3,6 +3,8 @@ TAGS
 .#.*
 
 cache/*
+backups/
+saves/
 ido.last
 auto-save-list
 session.*

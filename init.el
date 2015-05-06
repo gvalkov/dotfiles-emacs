@@ -72,12 +72,25 @@
 
 ;-----------------------------------------------------------------------------
 ; backup and autosave
-(setq make-backup-files nil)
-(setq create-lockfiles t)
-(setq delete-auto-save-files t)
-(setq auto-save-default nil)
+(if (not (file-exists-p "~/.emacs.d/backups"))
+    (make-directory "~/.emacs.d/backups" t))
+(setq backup-directory-alist `(("." . "~/.emacs.d/backups/")))
 
-;(setq backup-directory-alist ...)
+(setq make-backup-files t
+      backup-by-copying t
+      version-control t
+      delete-old-versions t
+      delete-by-moving-to-trash nil
+      kept-old-version 6
+      kept-new-versions 9)
+
+(setq delete-auto-save-files t
+      auto-save-default t
+      auto-save-timeout 20
+      auto-save-interval 200)
+
+(setq create-lockfiles t)
+
 ;(setq auto-save-file-name-transforms ...)
 
 ;-----------------------------------------------------------------------------
@@ -1198,6 +1211,8 @@
 (associate-mode "Makefile\\(\\..*\\)?" makefile-mode)
 (associate-mode "CMakeLists\\.txt\\'" cmake-mode)
 (associate-mode "\\.cmake\\'" cmake-mode)
+(associate-mode "\\.vcf$" sensitive-minor-mode)
+(associate-mode "\\.gpg$" sensitive-minor-mode)
 
 ;;;---------------------------------------------------------------------------
 ;;; Program associations
