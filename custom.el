@@ -13,4 +13,5 @@
    ["#282a2e" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#81a2be" "#e0e0e0"])
  '(ansi-term-color-vector
    [unspecified "#282a2e" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#81a2be" "#e0e0e0"] t)
- '(bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks"))
+ '(rst-level-face-base-color "grey")
+ '(rst-level-face-base-light 40))
