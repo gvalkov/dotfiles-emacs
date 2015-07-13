@@ -338,7 +338,6 @@
     (evil-set-initial-state 'magit-branch-manager-mode 'emacs)
     (evil-set-initial-state 'magit-commit-mode 'emacs)
     (evil-set-initial-state 'magit-log-mode 'normal)
-    (evil-set-initial-state 'magit-rebase-mode 'emacs)
     (evil-set-initial-state 'log-view-mode 'emacs)
     (evil-set-initial-state 'ibuffer-mode 'normal)
     (evil-set-initial-state 'ack-mode 'normal)
@@ -979,16 +978,6 @@
 (setq langtool-language-tool-jar "/usr/share/java/languagetool/languagetool-commandline.jar")
 
 ;-----------------------------------------------------------------------------
-(use-package git-commit-mode
-  :mode (("/COMMIT_EDITMSG\\'" . git-commit-mode)
-         ("/NOTES_EDITMSG\\'" . git-commit-mode)
-         ("/MERGE_MSG\\'" . git-commit-mode)
-         ("/TAG_EDITMSG\\'" . git-commit-mode)
-         ("/PULLREQ_EDITMSG\\'" . git-commit-mode)))
-
-(use-package git-rebase-mode
-  :mode ("/git-rebase-todo\\'" . git-rebase-mode))
-
 (use-package gitconfig-mode
   :mode (("/\\.?git/?config\\'" . gitconfig-mode)
          ("/\\.gitmodules\\'" . gitconfig-mode))
@@ -1002,6 +991,10 @@
 
 ;; (setq magit-save-some-buffers nil)
 (use-package magit
+  :commands (magit-log
+             magit-commit
+             magit-status
+             magit-blame-mode)
   :bind ("<f11>" . magit-status)
   :config
   (progn
@@ -1012,13 +1005,14 @@
           magit-set-upstream-on-push t
           magit-diff-refine-hunk t
           magit-auto-revert-mode-lighter nil
-          magit-completing-read-function 'magit-ido-completing-read)
+          ;; magit-completing-read-function 'magit-ido-completing-read
+          magit-completing-read-function 'magit-builtin-completing-read)
 
-    ;; (add-hook 'magit-log-edit-mode-hook 'auto-capitalize-mode)
     (add-hook 'magit-log-edit-mode-hook 'flyspell-mode)
+    ;; (add-hook 'magit-log-edit-mode-hook 'auto-capitalize-mode)
     ;; (add-hook 'magit-log-edit-mode-hook 'artbollocks-mode)
 
-    (add-hook 'git-commit-mode-hook 'turn-on-flyspell)
+    (add-hook 'git-commit-setup-hook 'git-commit-turn-on-flyspell)
     ;; (add-hook 'git-commit-mode-hook 'auto-capitalize-mode)
     ;; (add-hook 'git-commit-mode-hook 'artbollocks-mode)
     (add-hook! 'git-commit-mode-hook (toggle-save-place 0))
@@ -1426,6 +1420,7 @@
  ; magit
  "gs" 'magit-status
  "gl" 'magit-log
+ "gL" 'magit-log-buffer-file
  "gb" 'magit-blame-mode
 
  ; evil-nerd-comment

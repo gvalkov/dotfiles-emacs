@@ -63,8 +63,6 @@
 (depends-on "frame-fns")
 (depends-on "fringe-helper")
 (depends-on "fuzzy")
-(depends-on "git-commit-mode")
-(depends-on "git-rebase-mode")
 (depends-on "gnuplot-mode")
 (depends-on "go-autocomplete")
 (depends-on "go-mode")
