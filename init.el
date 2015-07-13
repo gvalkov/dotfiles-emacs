@@ -75,7 +75,10 @@
 ; backup and autosave
 (if (not (file-exists-p "~/.emacs.d/backups"))
     (make-directory "~/.emacs.d/backups" t))
+
 (setq backup-directory-alist `(("." . "~/.emacs.d/backups/")))
+(setq auto-save-file-name-transforms
+      `((".*", "~/.emacs.d/backups/" t)))
 
 (setq make-backup-files t
       backup-by-copying t
@@ -230,6 +233,11 @@
 (setq url-configuration-directory "~/.emacs.d/cache/url")
 
 ;-----------------------------------------------------------------------------
+(when (executable-find "hunspell")
+  (setq-default ispell-program-name "hunspell")
+  (setq ispell-really-hunspell t))
+
+;-----------------------------------------------------------------------------
 ; editing minor modes
 (electric-indent-mode -1)
 
@@ -310,6 +318,7 @@
     ;(setq evil-esc-delay 0)
     (setq evil-move-cursor-back t)
     (setq evil-cross-lines nil)
+    (setq evil-symbol-word-search t)
     ;; (evil-set-toggle-key "<pause>")
 
     ; look and feel
@@ -341,6 +350,7 @@
     (evil-set-initial-state 'image-mode 'emacs)
     (evil-set-initial-state 'bc-menu-mode 'emacs)
     (evil-set-initial-state 'erc-mode 'normal)
+    (evil-set-initial-state 'calc-mode 'emacs)
 
     (evil-defmap evil-ex-completion-map
       (kbd "C-r") #'evil-ex-paste-from-register ; registers in ex-mode
@@ -370,6 +380,9 @@
       :config
       (setq evilnc-hotkey-comment-operator "g#"))
 
+    (use-package evil-matchit
+      :init (global-evil-matchit-mode 1))
+
     (use-package evil-surround
       :init
       (progn
@@ -382,18 +395,18 @@
                     (push '(?~ . ("``" . "``")) evil-surround-pairs-alist))
 
         (setq-default evil-surround-pairs-alist
-                      '((?\( . ("(" . ")"))
-                        (?\[ . ("[" . "]"))
-                        (?\{ . ("{" . "}"))
-                        (?\) . ("( " . " )"))
-                        (?\] . ("[ " . " ]"))
-                        (?\} . ("{ " . " }"))
-                        (?> . ("< " . " >"))
+                      '((?\) . ("(" . ")"))
+                        (?\] . ("[" . "]"))
+                        (?\} . ("{" . "}"))
+                        (?\( . ("( " . " )"))
+                        (?\[ . ("[ " . " ]"))
+                        (?\{ . ("{ " . " }"))
+                        (?< . ("< " . " >"))
                         (?# . ("#{" . "}"))
                         (?p . ("(" . ")"))
                         (?b . ("[" . "]"))
                         (?B . ("{" . "}"))
-                        (?< . ("<" . ">"))
+                        (?> . ("<" . ">"))
                         (?t . evil-surround-read-tag)))))))
 
 ;-----------------------------------------------------------------------------
@@ -558,7 +571,7 @@
 (setq tramp-persistency-file-name "~/emacs/cache/tramp")
 (setq tramp-default-method "ssh")
 ;; (setq tramp-debug-buffer t)
-;; (setq tramp-verbose 10)
+(setq tramp-verbose 2)
 ;; (setq tramp-password-prompt-regexp ".*[Pp]assword: *$")
 ;; (setq tramp-shell-prompt-pattern "^[^;$#>]*[;$#>] *")
 (setq password-cache-expiry nil)
@@ -764,6 +777,11 @@
     (setq sp-highlight-pair-overlay nil
           sp-navigate-close-if-unbalanced t)
 
+    (sp-pair "(" ")"   :wrap "M-(")
+    (sp-pair "{" "}"   :wrap "M-{")
+    (sp-pair "[" "]"   :wrap "M-[")
+    (sp-pair "\"" "\"" :wrap "M-\"")
+    (sp-pair "${" "}"  :wrap "M-$")
 
     (sp-with-modes '(emacs-lisp-mode
                      inferior-emacs-lisp-mode
@@ -944,6 +962,7 @@
 ;;(toggle-diredp-find-file-reuse-dir 1)
 (setq diredp-hide-details-initially-flag nil)
 (setq diredp-hide-details-propagate-flag nil)
+(put 'dired-find-alternate-file 'disabled nil)
 
 ;-----------------------------------------------------------------------------
 (use-package rainbow-mode
@@ -955,6 +974,9 @@
     (add-hook 'html-mode-hook 'rainbow-mode)
     (add-hook 'sass-mode-hook 'rainbow-mode)
     (add-hook 'scss-mode-hook 'rainbow-mode)))
+
+(require 'langtool)
+(setq langtool-language-tool-jar "/usr/share/java/languagetool/languagetool-commandline.jar")
 
 ;-----------------------------------------------------------------------------
 (use-package git-commit-mode
@@ -984,6 +1006,7 @@
   :config
   (progn
     (setq magit-commit-signoff nil
+          magit-auto-revert-mode nil
           magit-process-popup-time 5
           magit-save-some-buffers nil
           magit-set-upstream-on-push t
@@ -1185,10 +1208,12 @@
 ;-----------------------------------------------------------------------------
 (use-package sh-script
   :config
-  (setq-default sh-basic-offset 2
-                sh-indentation 2
-                sh-intent-for-case-label 0
-                sh-intent-for-case-alt '+))
+  (progn
+    (modify-syntax-entry ?_ "w" sh-mode-syntax-table)
+    (setq-default sh-basic-offset 2
+                  sh-indentation 2
+                  sh-intent-for-case-label 0
+                  sh-intent-for-case-alt '+)))
 
 ;-----------------------------------------------------------------------------
 (use-package perl-mode
@@ -1202,6 +1227,11 @@
           cperl-continued-statement-offset 0
           cperl-indent-level 4
           cperl-indent-parens-as-block t)))
+
+;-----------------------------------------------------------------------------
+(use-package gyp
+  :mode (("\\.gyp\\'" . gyp-mode)
+         ("\\.gypi\\'" . gyp-mode)))
 
 ;;;---------------------------------------------------------------------------
 ;;; File associations
@@ -1217,6 +1247,7 @@
 (associate-mode "Makefile\\.PL$" perl-mode)
 (associate-mode "Makefile\\(\\..*\\)?" makefile-mode)
 (associate-mode "CMakeLists\\.txt\\'" cmake-mode)
+(associate-mode "SConscript\\|SConstruct" python-mode)
 (associate-mode "\\.cmake\\'" cmake-mode)
 (associate-mode "\\.vcf$" sensitive-minor-mode)
 (associate-mode "\\.gpg$" sensitive-minor-mode)
@@ -1241,6 +1272,7 @@
   :defer t
   :init
   (progn
+    (setq org-return-follows-link t)
     (setq org-log-done 'time)
     (setq org-link-abbrev-alist
           '(("attach" . org-attach-expand-link)
@@ -1263,11 +1295,15 @@
       "ot" 'org-show-todo-tre))
   :config
   (progn
+    (evil-define-key 'normal evil-org-mode-map (kbd "RET") 'org-return)
     (eval-after-load "org-agenda"
       '(progn
          (define-key org-agenda-mode-map "j" 'org-agenda-next-line)
          (define-key org-agenda-mode-map "k" 'org-agenda-previous-line)))
     (use-package evil-org)
+    (use-package ox-reveal
+      :config
+      (setq org-reveal-root "file:///home/gv/downloads/reveal.js-3.1.0/"))
     (add-hook 'org-mode-hook 'evil-org-mode)))
 
 (setq org-startup-indented t)
@@ -1319,6 +1355,9 @@
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((sh . t)
+   (plantuml . t)
+   (dot .t )
+   (ledger . t)
    (python . t)))
 
 ;-----------------------------------------------------------------------------
@@ -1359,6 +1398,8 @@
 
 ; my/commands
 (global-set-key (kbd "C-c n") 'my/show-and-copy-file-name)
+(global-set-key (kbd "C-c u") 'untabify)
+(global-set-key (kbd "C-c t") 'tabify)
 
 (evil-leader/set-key
  "w" 'save-buffer

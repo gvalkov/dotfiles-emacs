@@ -92,6 +92,18 @@
      (delete-and-extract-region b e) "\\b"))))
 
 ;-----------------------------------------------------------------------------
+(defun my/quote-word-region-to-list (b e)
+  (interactive "r")
+  (save-excursion
+    (set-mark-command nil)
+    (save-restriction
+      (narrow-to-region b e)
+      (beginning-of-buffer)
+      (while (search-forward-regexp "\\(\\b[a-zA-Z0-9_$]+\\b\\)" nil t )
+        (replace-match "'\\1',")))
+    (setq deactivate-mark nil)))
+
+;-----------------------------------------------------------------------------
 (defun align= (b e)
   (interactive "r")
   (align-regexp b e "\\(\\s-*\\)[=|:]" 1 1))
